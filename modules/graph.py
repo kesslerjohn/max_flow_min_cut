@@ -9,7 +9,6 @@ class Vertex(object):
             self.dist = sys.maxsize
         self.pred = None #in-neighbor on tentantive shortest path
         self.next = None #out-neighbor on tentative shortest path
-        return 0
 
 class DirEdge(object):
     def __init__(self, u : Vertex, v : Vertex, cpc : int = 5, weight : int = 0):
@@ -20,7 +19,6 @@ class DirEdge(object):
         self.u = u
         self.v = v
         self.weight = weight
-        return 0
 
     def updateFlow(self, f : int):
         self.flow = f
@@ -34,7 +32,6 @@ class Graph(object):
     def __init__(self, V: list[Vertex], E: list[DirEdge]):
         self.nodes = V
         self.edges = E
-        return 0
 
     def getNodes(self):
         return self.nodes
@@ -44,21 +41,27 @@ class Graph(object):
     
 class PQueue(object):
     def __init__(self, priority : str = "lowest") -> int:
-        self.items = {}
+        self.items = {} #items must be tuples (priority, item)
         self.highest = False
         if priority == "highest":
             self.highest = True
-        return 0
 
     def pop(self) -> Vertex:
-        if self.highest:
-            return self.items[max(self.items.keys)]
-        return self.items[min(self.items.keys)]
+        #how to ensure correctness?
+        #this is when Haskell Maybe Vertex would be nice
+        # TODO try returning the tuple
+        try:
+            if self.highest:
+                return self.items[max(self.items.keys())]
+            return self.items[min(self.items.keys())]
+        except ValueError:
+            return Vertex(True, True)
 
-    def push(self, item : (int, Vertex)) -> int:
-        if self.items[item[0]] == None:
-            self.items[item[0]] = [item[1]]
+    def push(self, item : tuple[int, Vertex]) -> int:
+        try: 
+            self.items[item[0]].append(item[1])
+        except KeyError:
+           self.items[item[0]] = item[1]
         return 0
     
-    def updateKey(self, v : Vertex, val : int) -> int:
-        return 0
+    
